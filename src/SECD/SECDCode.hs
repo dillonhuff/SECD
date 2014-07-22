@@ -1,7 +1,6 @@
 module SECD.SECDCode(
   SECDCode, int, bool, float,
-  closure, access, apply,
-  startLet, endLet, ret,
+  closure, access, apply, ret,
   jump, condJump, label,
   builtin, cons) where
 
@@ -16,8 +15,6 @@ data SECDCode
      | Builtin Name
      | Apply
      | Cons
-     | Let
-     | EndLet
      | Return
      | Jump Int
      | CondJump Int
@@ -32,8 +29,6 @@ access = Access
 builtin = Builtin
 apply = Apply
 cons = Cons
-startLet = Let
-endLet = EndLet
 ret = Return
 jump = Jump
 condJump = CondJump

@@ -16,5 +16,6 @@ toSECDCases =
    (lambda ["no", "yes"] (app (var "int_add") [var "no", var "yes"]),
     [closure
       [int 0, access 0 0, cons, access 0 1, cons, builtin "int_add", apply, ret]]),
+   (lambda ["oooh"] (floatVal 9.3), [closure [float 9.3, ret]]),
    (ifThenElse (boolVal True) (intVal 0) (intVal 2),
     [bool True, condJump 0, int 2, jump 1, label 0, int 0])]
