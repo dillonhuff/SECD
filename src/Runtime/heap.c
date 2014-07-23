@@ -1,13 +1,18 @@
 #include "heap.h"
 
 ERROR_CODE split_heap_obj(HEAP h, HEAP_OBJ to_split, size_t new_size, HEAP_OBJ rest) {
-  if (new_size > to_split->size + sizeof(heap_obj)) {
+  if (new_size > to_split->size - sizeof(heap_obj)) {
     return OUT_OF_RANGE_SPLIT;
+  }
+  if (to_split->type != FREE) {
+    return SPLITTING_ALLOCATED_HEAP_BLOCK;
   }
   byte* end_of_to_split = (byte*) to_split;
   end_of_to_split += sizeof(heap_obj) + new_size;
   rest = (HEAP_OBJ) &end_of_to_split;
   rest->size = to_split->size - new_size - sizeof(heap_obj);
+  rest->mark_status = UNMARKED;
+  rest->type = FREE;
   to_split->size = new_size;
   h->available = h->available - HEAP_OBJ_OVERHEAD;
   return SUCCESS;
@@ -39,8 +44,12 @@ ERROR_CODE alloc_mem(HEAP h, size_t amount, byte* ptr, HEAP_OBJ_TYPE type) {
     HEAP_OBJ next_free_obj;
     if (leftover >= 0) {
       if (leftover >= sizeof(heap_obj)) {
-	split_heap_obj(h, cur_obj, amount, next_free_obj);
-	next_free_obj->next_free = cur_obj->next_free;
+	ERROR_CODE split_err = split_heap_obj(h, cur_obj, amount, next_free_obj);
+	if (!split_err) {
+	  next_free_obj->next_free = cur_obj->next_free; 
+	} else {
+	  return split_err;
+	}
       } else {
 	next_free_obj = cur_obj->next_free;
       }

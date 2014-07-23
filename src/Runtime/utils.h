@@ -12,5 +12,6 @@ typedef unsigned int ERROR_CODE;
 #define STACK_EMPTY 1
 #define HEAP_OVERFLOW 2
 #define OUT_OF_RANGE_SPLIT 3
+#define SPLITTING_ALLOCATED_HEAP_BLOCK 4
 
 #endif
