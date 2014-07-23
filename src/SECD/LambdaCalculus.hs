@@ -38,7 +38,19 @@ toSECD l e (IfThenElse c1 c2 c3) = (finalCode, finalL)
    c3Res = toSECD c2L e c3
    c3Code = fst c3Res
    finalL = snd c3Res
-   finalCode = c1Code ++ [condJump l] ++ c3Code ++ [jump (l+1)] ++ [label l] ++ c2Code
+   finalCode = c1Code ++ [condJump l] ++ c3Code ++ [jump (l+1)] ++ [label l] ++ c2Code ++ [label (l+1)]
+toSECD l e (LetRec binds expr) = (finalCode, finalL)
+  where
+    names = map fst binds
+    defs = map snd binds
+    newE = names : e
+    argRest = toSECDConsList l newE defs
+    argCode = fst argRest
+    argL = snd argRest
+    exprRes = toSECD argL newE expr
+    exprCode = fst exprRes
+    finalL = snd exprRes
+    finalCode = [dum] ++ argCode ++ [closure (exprCode ++ [ret]), rap]
 
 toSECDConsList :: Int -> Env -> [LambdaExpr] -> ([SECDCode], Int)
 toSECDConsList l e exprs = ((int 0) : listCode, finalL)

@@ -1,7 +1,7 @@
 module SECD.SECDCode(
   SECDCode, int, bool, float,
   closure, access, apply, ret,
-  jump, condJump, label,
+  jump, condJump, label, dum, rap,
   builtin, cons) where
 
 type Name = String
@@ -19,6 +19,8 @@ data SECDCode
      | Jump Int
      | CondJump Int
      | Label Int
+     | Dummy
+     | Rap
        deriving (Eq, Ord, Show)
 
 int = Integer
@@ -33,3 +35,5 @@ ret = Return
 jump = Jump
 condJump = CondJump
 label = Label
+dum = Dummy
+rap = Rap
