@@ -9,10 +9,11 @@ ERROR_CODE split_heap_obj(HEAP h, HEAP_OBJ to_split, size_t new_size, HEAP_OBJ r
   }
   byte* end_of_to_split = (byte*) to_split;
   end_of_to_split += sizeof(heap_obj) + new_size;
-  rest = (HEAP_OBJ) &end_of_to_split;
-  rest->size = to_split->size - new_size - sizeof(heap_obj);
+  rest = (HEAP_OBJ) end_of_to_split;
+  rest->size = to_split->size - new_size - HEAP_OBJ_OVERHEAD;
   rest->mark_status = UNMARKED;
   rest->type = FREE;
+  rest->next_free = NULL;
   to_split->size = new_size;
   h->available = h->available - HEAP_OBJ_OVERHEAD;
   return SUCCESS;
@@ -54,6 +55,7 @@ ERROR_CODE alloc_mem(HEAP h, size_t amount, byte* ptr, HEAP_OBJ_TYPE type) {
 	next_free_obj = cur_obj->next_free;
       }
       ptr = (byte*) &(cur_obj->next_free);
+      cur_obj->type = type;
       h->available = h->available - cur_obj->size;
       if (prev_obj != NULL) {
 	prev_obj->next_free = next_free_obj;

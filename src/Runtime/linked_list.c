@@ -19,5 +19,10 @@ ERROR_CODE push_list(HEAP h, LIST l, void* data) {
 }
 
 ERROR_CODE pop_list(LIST l, void* data) {
+  if (l == NULL) {
+    return LIST_EMPTY;
+  }
+  data = l->data;
+  l = l->next;
   return SUCCESS;
 }
